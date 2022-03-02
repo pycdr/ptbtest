@@ -4,6 +4,7 @@ from telegram import Bot, ReplyMarkup, Message, User, BotCommand
 from telegram.utils.request import Request
 from telegram.utils.types import JSONDict, ODVInput
 from typing import Union, Optional, List
+from .mock_request import MockRequest
 
 class MockBot(Bot):
     def __init__(self, token: str, request: 'Request' = None):
@@ -15,7 +16,7 @@ class MockBot(Bot):
         self.base_file_url = str(base_file_url) + str(self.token)
         self._bot: Optional[User] = None
         self._commands: Optional[List[BotCommand]] = None
-        self._request = request or Request()
+        self._request = request or MockRequest()
         self.private_key = None
         self.logger = logging.getLogger(__name__)
         self.bot_messages = Queue()
@@ -36,4 +37,3 @@ class MockBot(Bot):
         )
         self.bot_messages.put(result_message)
         return result_message
-
