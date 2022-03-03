@@ -1,17 +1,17 @@
-from typing import Dict, List, Callable
-from telegram import Chat, TelegramObject, User
+from queue import Queue
+from typing import Dict, List
+from telegram import Chat, TelegramObject, Update, User
 from telegram.utils.types import JSONDict
 from typing import Union
-import pdb
-
-STATUSES: Dict[str, Callable[[JSONDict], Union[JSONDict, bool]]] = {
-}
+from .statuses import STATUSES
 
 class MockServer:
     def __init__(self):
         self._users: Dict[int, User] = {}
         self._chats: Dict[int, Chat] = {}
-        self._bot_reactions: List[TelegramObject] = []
+        self._bot_reactions: Queue = Queue()
+        self._updates: Queue = Queue()
+        self._bot_user: User = None
     
     @property
     def users(self) -> Dict[int, User]:
@@ -24,6 +24,10 @@ class MockServer:
     @property
     def bot_reactions(self) -> List[TelegramObject]:
         return self._bot_reactions
+    
+    @property
+    def updates(self) -> List[TelegramObject]:
+        return self._updates
 
     def insert_user(self, user: User):
         if not isinstance(user, User):
@@ -38,4 +42,7 @@ class MockServer:
     def post(self, status: str, data: JSONDict) -> Union[JSONDict, bool]:
         if status not in STATUSES:
             raise ValueError(f"invalid status: {status}")
-        return STATUSES[status](data)
+        return STATUSES[status](data, self)
+    
+    def set_bot_user(self, user: User) -> None:
+        self._bot_user = user
