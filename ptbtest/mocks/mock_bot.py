@@ -6,7 +6,7 @@ from typing import Union, Optional, List
 from .mock_request import MockRequest
 
 class MockBot(Bot):
-    def __init__(self, token: str, bot_user: User, request: 'Request' = None):
+    def __init__(self, token: str, bot_user: User, request: 'MockRequest' = None):
         self.token = self._validate_token(token)
         self.defaults = None
         base_url = 'https://api.telegram.org/bot'

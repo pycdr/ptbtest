@@ -17,8 +17,8 @@ class MockUpdater(Updater):
     """Mock Updater based on `telegram.Updater`"""
     def __init__(self, token: str = None, bot_user: User = None):
         self.logger = logging.getLogger(__name__)
-        self._request = MockRequest()
-        self.bot = MockBot(
+        self._request: MockRequest = MockRequest()
+        self.bot: MockBot = MockBot(
             request = self._request, 
             token = token or generate_random_token(),
             bot_user = bot_user
