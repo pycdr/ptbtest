@@ -2,6 +2,7 @@ import logging
 from queue import Queue
 from threading import Event, Lock, Thread
 from typing import Any, List
+from telegram import User
 from telegram.ext import Dispatcher, JobQueue, Updater
 from .mock_request import MockRequest
 from .mock_bot import MockBot
@@ -14,12 +15,13 @@ def generate_random_token():
 
 class MockUpdater(Updater):
     """Mock Updater based on `telegram.Updater`"""
-    def __init__(self, token: str = None):
+    def __init__(self, token: str = None, bot_user: User = None):
         self.logger = logging.getLogger(__name__)
         self._request = MockRequest()
         self.bot = MockBot(
             request = self._request, 
-            token = token or generate_random_token()
+            token = token or generate_random_token(),
+            bot_user = bot_user
         )
         self.update_queue: Queue = Queue()
         self.job_queue = JobQueue()

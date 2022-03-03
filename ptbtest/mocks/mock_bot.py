@@ -1,5 +1,4 @@
 import logging
-from queue import Queue
 from telegram import Bot, ReplyMarkup, Message, User, BotCommand
 from telegram.utils.request import Request
 from telegram.utils.types import JSONDict, ODVInput
@@ -7,7 +6,7 @@ from typing import Union, Optional, List
 from .mock_request import MockRequest
 
 class MockBot(Bot):
-    def __init__(self, token: str, request: 'Request' = None):
+    def __init__(self, token: str, bot_user: User, request: 'Request' = None):
         self.token = self._validate_token(token)
         self.defaults = None
         base_url = 'https://api.telegram.org/bot'
@@ -16,10 +15,16 @@ class MockBot(Bot):
         self.base_file_url = str(base_file_url) + str(self.token)
         self._bot: Optional[User] = None
         self._commands: Optional[List[BotCommand]] = None
-        self._request = request or MockRequest()
+        self._bot = bot_user or User(
+            id=0, first_name="MockBot", is_bot=True,
+            username="mockbot", can_join_groups=False,
+            can_read_all_group_messages=True,
+            supports_inline_queries=True
+        )
         self.private_key = None
         self.logger = logging.getLogger(__name__)
-        self.bot_messages = Queue()
+        self._request: MockRequest = request or MockRequest()
+        self._request.server.set_bot_user(self._bot)
     
     def _message(
         self, endpoint: str, data: JSONDict, 
@@ -35,5 +40,5 @@ class MockBot(Bot):
             disable_notification, reply_markup, 
             allow_sending_without_reply, timeout, api_kwargs
         )
-        self.bot_messages.put(result_message)
+        self.request.server.bot_reactions.put(result_message)
         return result_message
