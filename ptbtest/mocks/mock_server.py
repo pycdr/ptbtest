@@ -14,6 +14,10 @@ class MockServer:
         self._bot_user: User = None
     
     @property
+    def bot_user(self) -> User:
+        return self._bot_user
+    
+    @property
     def users(self) -> Dict[int, User]:
         return self._users
     
