@@ -13,7 +13,6 @@ class MockBot(Bot):
         base_file_url = 'https://api.telegram.org/file/bot'
         self.base_url = str(base_url) + str(self.token)
         self.base_file_url = str(base_file_url) + str(self.token)
-        self._bot: Optional[User] = None
         self._commands: Optional[List[BotCommand]] = None
         self._bot = bot_user or User(
             id=0, first_name="MockBot", is_bot=True,

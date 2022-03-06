@@ -5,6 +5,7 @@ from typing import Union
 from urllib.parse import urlparse
 
 class MockRequest(Request):
+    __slots__ = ('server', )
     def __init__(self, con_pool_size: int = 1, proxy_url: str = None, urllib3_proxy_kwargs: JSONDict = None, connect_timeout: float = 5, read_timeout: float = 5):
         super().__init__(con_pool_size, proxy_url, urllib3_proxy_kwargs, connect_timeout, read_timeout)
         self.server: MockServer = MockServer()
