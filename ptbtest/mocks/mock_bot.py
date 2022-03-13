@@ -32,12 +32,15 @@ class MockBot(Bot):
         reply_markup: ReplyMarkup = None, 
         allow_sending_without_reply: ODVInput[bool] = ..., 
         timeout: ODVInput[float] = ..., 
-        api_kwargs: JSONDict = None
+        api_kwargs: JSONDict = None, 
+        protect_content=None
     ) -> Union[bool, Message]:
-        result_message = super()._message(
+        result_message: Message = super()._message(
             endpoint, data, reply_to_message_id, 
             disable_notification, reply_markup, 
-            allow_sending_without_reply, timeout, api_kwargs
+            allow_sending_without_reply, timeout, 
+            api_kwargs, protect_content
         )
+        self.request.server.messages[result_message.chat.id][result_message.message_id] = result_message
         self.request.server.bot_reactions.put(result_message)
         return result_message
