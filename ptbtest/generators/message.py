@@ -7,12 +7,14 @@ from telegram.utils.types import ODVInput, DVInput, JSONDict
 from telegram.utils.helpers import DEFAULT_NONE
 
 def _find_next_id(ordered_dict: OrderedDict, last_id: int) -> int:
+    """returns the last id + 1 :/"""
     next_id = last_id+1
     while next_id in ordered_dict:
         next_id+=1
     return next_id
 
 class SendMessageGenerator(Generator):
+    """Message Update Generator Class"""
     def __init__(
         self, 
         chat_id: Union[int, str], 

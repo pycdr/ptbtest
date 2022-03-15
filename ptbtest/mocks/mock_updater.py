@@ -1,3 +1,5 @@
+"""This module contains the class MockUpdater, which is used instead of Updater."""
+
 import logging
 from queue import Queue
 from threading import Event, Lock, Thread
@@ -14,15 +16,39 @@ def generate_random_token():
     return f"{left}:{right}"
 
 class MockUpdater(Updater):
-    """Mock Updater based on `telegram.Updater`"""
+    """
+    This class, based on :class:`telegram.Updater`, is an alternative of this class for test cases. 
+    it uses :class:`ptbtest.mocks.mock_request.MockRequest` and :class:`ptbtest.MockBot`, instead of 
+    :class:`Request` and :class:`MockBot`.
+
+    Args:
+        token (:obj:`str`, optional): The bot's token. default is :obj:`None` (random token)
+        bot_user (:class:`telegram.User`, optional): The bot's user object. default is :obj:`None`
+            (predefined user object)
+    
+    Attributes:
+        bot (:class:`ptbtest.MockBot`): The bot used with this Updater.
+        user_sig_handler (:obj:`None`): Not effective in this class!
+        update_queue (:obj:`Queue`): Queue for the updates.
+        job_queue (:class:`telegram.ext.JobQueue`): Jobqueue for the updater.
+        dispatcher (:class:`telegram.ext.Dispatcher`): Dispatcher that handles the updates and
+            dispatches them to the handlers.
+        running (:obj:`bool`): Indicates if the updater is running.
+        persistence (:class:`telegram.ext.BasePersistence`): Optional. The persistence class to
+            store data that should be persistent over restarts.
+        use_context (:obj:`bool`): Optional. :obj:`True` if using context based callbacks.
+    """
+
     def __init__(self, token: str = None, bot_user: User = None):
-        self.logger = logging.getLogger(__name__)
+        # using mock object to ignore using telegram API and be compatible with unittest:
         self._request: MockRequest = MockRequest()
         self.bot: MockBot = MockBot(
             request = self._request, 
             token = token or generate_random_token(),
             bot_user = bot_user
         )
+        # these attributes are not really effective in unittest; set their default values.
+        self.logger = logging.getLogger(__name__)
         self.update_queue: Queue = Queue()
         self.job_queue = JobQueue()
         self.__exception_event = Event()
@@ -47,7 +73,7 @@ class MockUpdater(Updater):
         self.__threads: List[Thread] = []
     
     def __getattribute__(self, __name: str) -> Any:
+        # need to fix "AttributeError: self._Updater__lock"
         if __name.startswith("_Updater"):
-            # to fix "AttributeError: self._Updater__lock"
             return object.__getattribute__(self, f"_MockUpdater{__name[8:]}")
         return object.__getattribute__(self, __name)
