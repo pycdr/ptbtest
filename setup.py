@@ -5,14 +5,14 @@ with open("README.rst", 'r') as readme_file:
     setup(
         name='ptbtest',
         version='2.0',
-        packages=['ptbtest', 'ptbtest.mocks'],
+        packages=['ptbtest', 'ptbtest.mocks', 'ptbtest.generators'],
         url='https://github.com/python-telegram-bot/ptbtest',
         license='GNU General Public License v3.0',
         author='M.M. Tahmasbi',
         author_email='pycdremail@gmail.com',
         description='A test library for python-telegram-bot (ptb) package',
         long_description=readme_file.read(),
-        install_requires=['python-telegram-bot', 'pytest'],
+        install_requires=['python-telegram-bot', 'pytest', 'Pillow'],
         keywords='python telegram bot unittest pytest test ptb ptbtest',
         classifiers=[
             'Development Status :: 4 - Beta',

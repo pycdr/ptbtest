@@ -6,12 +6,13 @@ from telegram.utils.types import JSONDict
 from .get_me import get_me
 from .webhook import delete_webhook
 from .get_updates import get_updates
-from .send import send_message
+from .send import send_message, send_photo
 
 # All method names and their functions
 STATUSES: Dict[str, Callable[[JSONDict, Any], Union[JSONDict, bool]]] = {
     "getMe": get_me,
     "deleteWebhook": delete_webhook,
     "getUpdates": get_updates,
-    "sendMessage": send_message
+    "sendMessage": send_message,
+    "sendPhoto": send_photo
 }

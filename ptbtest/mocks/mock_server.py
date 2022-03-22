@@ -1,8 +1,8 @@
 from queue import Queue
-from typing import Dict, List
+from typing import IO, Dict, List, Tuple
 from collections import OrderedDict
 from ptbtest.generators.base import Generator
-from telegram import Chat, TelegramObject, Update, User, Message
+from telegram import Chat, PhotoSize, TelegramObject, Update, User, Message
 from telegram.utils.types import JSONDict
 from typing import Union
 from .statuses import STATUSES
@@ -26,6 +26,8 @@ class MockServer:
         self._new_updates: Queue = Queue()
         # {chat_id -> {message_id: Message}}
         self._messages: Dict[int, OrderedDict] = {}
+        # {file_id -> PhotoSize}
+        self._files_id: Dict[str, PhotoSize] = {}
     
     @property
     def bot_user(self) -> User:
@@ -62,6 +64,11 @@ class MockServer:
         """All Messages in mock telegram"""
         return self._messages
 
+    @property
+    def files_id(self) -> Dict[str, PhotoSize]:
+        """All "file_id"s in mock telegram"""
+        return self._files_id
+
     def insert_user(self, user: User):
         """Insert new :class:`telegram.User` into the mock telegram"""
         if not isinstance(user, User):
@@ -97,5 +104,5 @@ class MockServer:
     def send_to_bot(self, generator: Generator) -> None:
         """Config a new Generator and Insert into bot updates"""
         if not isinstance(generator, Generator):
-            raise TypeError(f"parameter \"generator\" mus be from type \"ptbtest.generators.base.Generator\", not {type(generator).__name__}")
+            raise TypeError(f"parameter \"generator\" must be from type \"ptbtest.generators.base.Generator\", not {type(generator).__name__}")
         self.insert_update(generator.config(self))
