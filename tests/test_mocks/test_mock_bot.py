@@ -37,9 +37,3 @@ class TestMockBot:
             getattr(bot, method_name), 
             method_type
         )
-    
-    def test_message_method(self, monkeypatch):
-        message = Message(0, 0, Chat(0, "group"))
-        monkeypatch.setattr(Bot, "_message", lambda *_, **__: message)
-        assert bot._message(..., ...) is message
-        assert bot.request.server.bot_reactions.get_nowait() is message
